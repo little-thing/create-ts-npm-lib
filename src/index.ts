@@ -2,7 +2,8 @@
 
 console.log('CLI 开始执行...')
 
-import { prompt } from 'enquirer'
+import enquirer from "enquirer";
+const { prompt } = enquirer;
 import fs from 'fs-extra'
 import path from 'path'
 import { fileURLToPath } from 'url'
