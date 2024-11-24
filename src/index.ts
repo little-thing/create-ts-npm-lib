@@ -8,10 +8,41 @@ import fs from 'fs-extra'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import chalk from 'chalk'
+import { simpleGit, SimpleGit } from 'simple-git'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const templateDir = path.join(__dirname, '../template')
+const TEMPLATE_REPO = 'https://github.com/little-thing/create-ts-npm-lib.git'
+const TEMPLATE_BRANCH = 'main'
+
+async function downloadTemplate(targetDir: string) {
+  const git: SimpleGit = simpleGit()
+  const tempDir = path.join(targetDir, '.temp')
+  
+  try {
+    // 创建临时目录
+    await fs.ensureDir(tempDir)
+    
+    // 克隆仓库
+    console.log(chalk.cyan('正在下载模板...'))
+    await git.clone(TEMPLATE_REPO, tempDir, ['--depth', '1', '--branch', TEMPLATE_BRANCH])
+    
+    // 移动 template 目录内容到目标目录
+    const templateDir = path.join(tempDir, 'template')
+    await fs.copy(templateDir, targetDir, {
+      filter: (src) => {
+        return !src.includes('node_modules') &&
+               !src.includes('dist') &&
+               !src.includes('.git')
+      }
+    })
+    
+    // 清理临时目录
+    await fs.remove(tempDir)
+  } catch (error) {
+    // 确保清理临时目录
+    await fs.remove(tempDir)
+    throw error
+  }
+}
 
 async function init() {
   try {
@@ -59,20 +90,26 @@ async function init() {
     ])
 
     const targetDir = path.join(process.cwd(), answers.projectName)
+    console.log('目标目录路径:', targetDir)
 
-    // 复制模板文件
-    await fs.copy(templateDir, targetDir, {
-      filter: (src) => {
-        return !src.includes('node_modules') &&
-               !src.includes('dist') &&
-               !src.includes('.git')
-      }
-    })
+    // 确保目标目录不存在
+    if (await fs.pathExists(targetDir)) {
+      throw new Error(`目录 ${answers.projectName} 已存在`)
+    }
+
+    // 创建目标目录
+    await fs.ensureDir(targetDir)
+
+    // 下载模板
+    await downloadTemplate(targetDir)
 
     // 更新 package.json
     const pkgPath = path.join(targetDir, 'package.json')
-    const pkg = await fs.readJson(pkgPath)
+    if (!await fs.pathExists(pkgPath)) {
+      throw new Error('模板下载失败：未找到 package.json')
+    }
 
+    const pkg = await fs.readJson(pkgPath)
     const newPkg = {
       ...pkg,
       name: answers.projectName,
