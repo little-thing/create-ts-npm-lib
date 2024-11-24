@@ -11,8 +11,10 @@
     "template"
   ],
   "scripts": {
-    "build": "tsup",
-    "prepublishOnly": "pnpm build"
+    "build": "rimraf dist && tsup",
+    "prepublishOnly": "pnpm build",
+    "dev": "tsup --watch",
+    "debug": "node --inspect-brk dist/index.js"
   },
   "keywords": [
     "typescript",
@@ -33,6 +35,7 @@
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.11.24",
+    "rimraf": "^6.0.1",
     "tsup": "^8.0.2",
     "typescript": "^5.3.3"
   },

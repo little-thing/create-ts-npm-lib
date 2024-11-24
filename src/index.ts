@@ -11,7 +11,7 @@ import chalk from 'chalk'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const templateDir = path.join(__dirname, './template')
+const templateDir = path.join(__dirname, '../template')
 
 async function init() {
   try {
@@ -63,17 +63,16 @@ async function init() {
     // 复制模板文件
     await fs.copy(templateDir, targetDir, {
       filter: (src) => {
-        return !src.includes('node_modules') && 
-               !src.includes('dist') && 
-               !src.includes('.git') &&
-               !src.includes('cli')
+        return !src.includes('node_modules') &&
+               !src.includes('dist') &&
+               !src.includes('.git')
       }
     })
 
     // 更新 package.json
     const pkgPath = path.join(targetDir, 'package.json')
     const pkg = await fs.readJson(pkgPath)
-    
+
     const newPkg = {
       ...pkg,
       name: answers.projectName,
@@ -97,4 +96,4 @@ async function init() {
   }
 }
 
-init() 
+init()
