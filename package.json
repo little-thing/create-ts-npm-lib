@@ -41,10 +41,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-username/create-ts-npm-lib.git"
+    "url": "git+https://github.com/little-thing/create-ts-npm-lib.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/create-ts-npm-lib/issues"
+    "url": "https://github.com/little-thing/create-ts-npm-lib/issues"
   },
-  "homepage": "https://github.com/your-username/create-ts-npm-lib#readme"
+  "homepage": "https://github.com/little-thing/create-ts-npm-lib#readme"
 }

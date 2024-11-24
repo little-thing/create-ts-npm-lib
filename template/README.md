@@ -1,16 +1,22 @@
 # TypeScript NPM Package Template
 
-一个用于快速创建 TypeScript NPM 包的模板项目。
+A template project for quickly creating TypeScript NPM packages.
 
-## 特性
+[中文文档](./README.zh-CN.md)
 
-- 📦 TypeScript 支持
-- 🔨 使用 tsup 进行构建
-- 🧪 Jest 测试框架
-- 📝 ESLint + Prettier 代码规范
-- 📋 完整的 TypeScript 类型声明
+## Features
+
+- 📦 TypeScript Support
+- 🔨 Build with tsup
+- 🧪 Jest Testing Framework
+- 📝 ESLint + Prettier Code Standards
+- 📋 Complete TypeScript Type Declarations
 - 🚀 GitHub Actions CI/CD
 
-## 使用方法
+## Getting Started
 
-1. 克隆此仓库 
+1. Install dependencies
+
+```bash
+pnpm install
+```
