@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
-console.log('CLI 开始执行...')
+import { messages } from './locales'
+
+console.log(messages.cliStarting)
 
 import enquirer from "enquirer";
 const { prompt } = enquirer;
@@ -22,7 +24,7 @@ async function downloadTemplate(targetDir: string) {
     await fs.ensureDir(tempDir)
     
     // 克隆仓库
-    console.log(chalk.cyan('正在下载模板...'))
+    console.log(chalk.cyan(messages.downloading))
     await git.clone(TEMPLATE_REPO, tempDir, ['--depth', '1', '--branch', TEMPLATE_BRANCH])
     
     // 移动 template 目录内容到目标目录
@@ -56,45 +58,45 @@ async function init() {
       {
         type: 'input',
         name: 'projectName',
-        message: '请输入项目名称:',
+        message: messages.prompts.projectName.message,
         validate: (value) => {
-          if (!value) return '项目名称不能为空'
-          if (!/^[a-z0-9-]+$/.test(value)) return '项目名称只能包含小写字母、数字和连字符'
+          if (!value) return messages.prompts.projectName.errors.empty
+          if (!/^[a-z0-9-]+$/.test(value)) return messages.prompts.projectName.errors.invalid
           return true
         }
       },
       {
         type: 'input',
         name: 'description',
-        message: '请输入项目描述:',
-        initial: '一个 TypeScript NPM 包'
+        message: messages.prompts.description.message,
+        initial: messages.prompts.description.initial
       },
       {
         type: 'input',
         name: 'author',
-        message: '请输入作者名称:',
+        message: messages.prompts.author.message,
         initial: ''
       },
       {
         type: 'input',
         name: 'version',
-        message: '请输入初始版本号:',
+        message: messages.prompts.version.message,
         initial: '0.0.1'
       },
       {
         type: 'input',
         name: 'license',
-        message: '请输入许可证类型:',
+        message: messages.prompts.license.message,
         initial: 'MIT'
       }
     ])
 
     const targetDir = path.join(process.cwd(), answers.projectName)
-    console.log('目标目录路径:', targetDir)
+    console.log(messages.targetDirectory, targetDir)
 
     // 确保目标目录不存在
     if (await fs.pathExists(targetDir)) {
-      throw new Error(`目录 ${answers.projectName} 已存在`)
+      throw new Error(`${answers.projectName} ${messages.errors.dirExists}`)
     }
 
     // 创建目标目录
@@ -106,7 +108,7 @@ async function init() {
     // 更新 package.json
     const pkgPath = path.join(targetDir, 'package.json')
     if (!await fs.pathExists(pkgPath)) {
-      throw new Error('模板下载失败：未找到 package.json')
+      throw new Error(messages.errors.templateDownloadFailed)
     }
 
     const pkg = await fs.readJson(pkgPath)
@@ -121,14 +123,14 @@ async function init() {
 
     await fs.writeJson(pkgPath, newPkg, { spaces: 2 })
 
-    console.log(chalk.green('\n✨ 项目创建成功！\n'))
-    console.log(chalk.cyan('接下来你可以：\n'))
+    console.log(chalk.green(messages.projectCreated))
+    console.log(chalk.cyan(messages.nextSteps))
     console.log(chalk.white(`cd ${answers.projectName}`))
     console.log(chalk.white('pnpm install'))
     console.log(chalk.white('pnpm dev\n'))
 
   } catch (error) {
-    console.error(chalk.red('错误：'), error)
+    console.error(chalk.red(messages.error), error)
     process.exit(1)
   }
 }
